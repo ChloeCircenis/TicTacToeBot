@@ -3,11 +3,10 @@ package TicTacToe;
 import board.Occupant;
 
 public class TicTacToePiece extends Occupant {
-    private final char symbol;
+    private final String symbol;
 
-    public TicTacToePiece(String idNumber, char  symbol) {
-        super(idNumber);
+    public TicTacToePiece(String idNumber, String symbol) {
+        super(idNumber,symbol);
         this.symbol = symbol;
     }
-
 }

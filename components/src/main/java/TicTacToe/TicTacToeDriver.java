@@ -37,8 +37,8 @@ public class TicTacToeDriver implements GameDriver {
     }
 
     @Override
-    public void logGameState() {
-
+    public int getTurn() {
+        return turn;
     }
 
     private List<Cell> getDiagonalLeft(Board board, Cell origin) {
@@ -128,8 +128,24 @@ public class TicTacToeDriver implements GameDriver {
         return false;
     }
 
+    @Override
     public void placePiece(int x, int y, Occupant symbol) {
         game.getGameBoard().addOccupant(x, y, symbol);
         lastUpdated = game.getGameBoard().getCell(x,y);
     }
+
+    @Override
+    public Player evaluateWinner() {
+        Player winner = null;
+        if(game.isOver()){
+            if(game.getPlayers().getFirst().getToken() == lastUpdated.getOccupant()){
+                return winner = game.getPlayers().getFirst();
+            }
+            else if(game.getPlayers().getLast().getToken() == lastUpdated.getOccupant()){
+                return winner = game.getPlayers().getLast();
+            }
+        }
+        return null;
+    }
 }
+

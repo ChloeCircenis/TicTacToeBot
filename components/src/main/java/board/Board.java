@@ -3,7 +3,7 @@ package board;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Board {
+public class Board {
     private final int width;
     private final int height;
     private final List<List<Cell>> board = new ArrayList<>();

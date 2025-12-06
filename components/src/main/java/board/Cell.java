@@ -17,6 +17,7 @@ public class Cell {
     public void setOccupant(Occupant occupant) {
         this.occupant = occupant;
     }
+    public void removeOccupant(Occupant occupant) {this.occupant = null;}
     public Coordinates getCoord() {
         return this.coordinates;
     }
@@ -36,5 +37,8 @@ public class Cell {
     }
     public boolean isEmpty() {
         return occupant == null;
+    }
+    public boolean contains(Occupant occupant) {
+        return(this.occupant == occupant);
     }
 }
