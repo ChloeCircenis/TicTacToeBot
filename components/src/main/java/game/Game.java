@@ -1,6 +1,5 @@
 package game;
 
-import TicTacToe.TicTacToeDriver;
 import board.Board;
 import player.Player;
 import player.PlayerFactory;
@@ -9,29 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private Board gameBoard;
-    private List<Player> players;
+    private final Board gameBoard;
+    private final List<Player> players;
     private boolean isOver;
-    private GameDriver driver;
 
     public Game(List<Player> players, Board board) {
         this.gameBoard = board;
         this.players = players;
-        this.driver = driver;
     }
-
-//    public void play(){
-//        while(!isOver) {
-//            driver.turn();
-//            isOver = driver.endCheck();
-//        }
-//    }
 
     public boolean isOver() {
         return isOver;
-    }
-    public void startGame(){
-        this.isOver = false;
     }
 
     public void setGameState(boolean state){
@@ -46,13 +33,9 @@ public class Game {
         return players;
     }
 
-    public GameDriver getGameDriver() {
-        return driver;
-    }
 
     public static class Builder{
-        private Game game;
-        private List<Player> players = new ArrayList<Player>();
+        private final List<Player> players = new ArrayList<>();
         private Board board;
         public Builder(){
         }
@@ -71,7 +54,6 @@ public class Game {
             return this;
         }
         public Builder ticTacToe(){
-//            game.driver = new TicTacToeDriver(game);
             this.board = new Board(3,3);
             return this;
         }

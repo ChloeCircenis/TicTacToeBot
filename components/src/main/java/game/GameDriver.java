@@ -1,12 +1,14 @@
 package game;
 
+import board.Board;
 import board.Occupant;
 import player.Player;
 
 public interface GameDriver {
-    public void turn();
-    public boolean endCheck();
-    public int getTurn();
-    public Player evaluateWinner();
-    public void placePiece(int x, int y, Occupant symbol);
+    void turn();
+    boolean endCheck();
+    int getTurn();
+    Player evaluateWinner();
+    void placePiece(int x, int y, Occupant symbol);
+    boolean hasWon(Board board, Occupant token);
 }
