@@ -7,44 +7,36 @@ import game.Game;
 import game.GameDriver;
 import player.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TicTacToeDriver implements GameDriver {
-    private Cell lastUpdated;
-    private final int IN_A_ROW = 3;
-    private Game game;
+
+    private final Game game;
     private int turn = 0;
 
     public TicTacToeDriver(Game game) {
         this.game = game;
     }
+
     @Override
     public void turn() {
         List<Player> players = game.getPlayers();
         Player player = players.get(turn % players.size());
 
-        Cell chosen = player.action(game, this);  // Get the chosen move
-
+        Cell chosen = player.action(game, this); // move selection
         if (chosen != null) {
-            placePiece(
-                    chosen.getCoord().xCoord(),
-                    chosen.getCoord().yCoord(),
-                    player.getToken()
-            );
+            placePiece(chosen.getCoord().xCoord(), chosen.getCoord().yCoord(), player.getToken());
         }
 
         turn++;
     }
 
-
     @Override
     public boolean endCheck() {
-        return
-                listCheck(getDiagonalLeft(game.getGameBoard(), lastUpdated)) ||
-                listCheck(getDiagonalRight(game.getGameBoard(), lastUpdated)) ||
-                listCheck(getVertical(game.getGameBoard(), lastUpdated)) ||
-                listCheck(getHorizontal(game.getGameBoard(), lastUpdated));
+        Board board = game.getGameBoard();
+        boolean someoneWon = hasWon(board, game.getPlayers().getFirst().getToken()) ||
+                hasWon(board, game.getPlayers().getLast().getToken());
+        return someoneWon || isBoardFull(board);
     }
 
     @Override
@@ -52,114 +44,96 @@ public class TicTacToeDriver implements GameDriver {
         return turn;
     }
 
-    private List<Cell> getDiagonalLeft(Board board, Cell origin) {
-        List<Cell> result = new ArrayList<>();
-        int i = origin.getCoord().xCoord();
-        int j = origin.getCoord().yCoord();
-        while(board.inBounds(i, j)) {
-            result.add(board.getCell(i, j));
-            i++;
-            j++;
-        }
-        int l = origin.getCoord().xCoord() - 1;
-        int k = origin.getCoord().yCoord() - 1;
-        while(board.inBounds(l, k)) {
-            result.add(0,board.getCell(l, k));
-            l--;
-            k--;
-        }
-        return result;
-    }
-
-    private List<Cell> getDiagonalRight(Board board, Cell origin) {
-        List<Cell> result = new ArrayList<>();
-        int i = origin.getCoord().xCoord();
-        int j = origin.getCoord().yCoord();
-        while(board.inBounds(i, j)) {
-            result.add(board.getCell(i, j));
-            i++;
-            j--;
-        }
-        int l = origin.getCoord().xCoord() - 1;
-        int k = origin.getCoord().yCoord() + 1;
-        while(board.inBounds(l, k)) {
-            result.add(0,board.getCell(l, k));
-            l--;
-            k++;
-        }
-        return result;
-    }
-
-    private List<Cell> getVertical(Board board, Cell origin) {
-        List<Cell> result = new ArrayList<>();
-        int i = origin.getCoord().xCoord();
-        int j = origin.getCoord().yCoord();
-        while(board.inBounds(i, j)) {
-            result.add(board.getCell(i, j));
-            j++;
-        }
-        int l = origin.getCoord().xCoord();
-        int k = origin.getCoord().yCoord() - 1;
-        while(board.inBounds(l, k)) {
-            result.add(0,board.getCell(l, k));
-            k--;
-        }
-        return result;
-    }
-
-    private List<Cell> getHorizontal(Board board, Cell origin) {
-        List<Cell> result = new ArrayList<>();
-        int i = origin.getCoord().xCoord();
-        int j = origin.getCoord().yCoord();
-        while(board.inBounds(i, j)) {
-            result.add(board.getCell(i, j));
-            i++;
-        }
-        int l = origin.getCoord().xCoord() - 1;
-        int k = origin.getCoord().yCoord();
-        while(board.inBounds(l, k)) {
-            result.add(0,board.getCell(l, k));
-            l--;
-        }
-        return result;
-    }
-
-    private Boolean listCheck(List<Cell> cells){
-        int count = 0;
-        for(Cell cell: cells) {
-            if(cell.getOccupant() == null){
-                return false;
-            }
-          if (lastUpdated.getOccupant().name.equals(cell.getOccupant().name)) {
-              count++;
-          } else {
-              return false;
-          }
-        }
-        if(count >= IN_A_ROW) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void placePiece(int x, int y, Occupant symbol) {
         game.getGameBoard().addOccupant(x, y, symbol);
-        lastUpdated = game.getGameBoard().getCell(x,y);
+//        Cell lastUpdated = game.getGameBoard().getCell(x, y);
     }
 
     @Override
     public Player evaluateWinner() {
-        Player winner = null;
-        if(game.isOver()){
-            if(game.getPlayers().getFirst().getToken() == lastUpdated.getOccupant()){
-                return winner = game.getPlayers().getFirst();
+        if (!game.isOver()) return null;
+
+        Board board = game.getGameBoard();
+        if (hasWon(board, game.getPlayers().getFirst().getToken())) {
+            return game.getPlayers().getFirst();
+        }
+        if (hasWon(board, game.getPlayers().getLast().getToken())) {
+            return game.getPlayers().getLast();
+        }
+        return null; // draw
+    }
+
+
+    @Override
+    public boolean hasWon(Board board, Occupant token) {
+        return checkVertical(board, token) || checkHorizontal(board, token) || checkDiagonal(board, token);
+    }
+
+
+    private boolean checkVertical(Board board, Occupant token){
+        List<List<Cell>> grid = board.getBoard();
+        int width = grid.size();
+        int height = grid.getFirst().size();
+
+        for (int y = 0; y < height; y++) {
+            boolean rowWin = true;
+            for (int x = 0; x < width; x++) {
+                if (grid.get(x).get(y).getOccupant() != token) {
+                    rowWin = false;
+                    break;
+                }
             }
-            else if(game.getPlayers().getLast().getToken() == lastUpdated.getOccupant()){
-                return winner = game.getPlayers().getLast();
+            if (rowWin) return true;
+        }
+        return false;
+    }
+
+    private boolean checkHorizontal(Board board, Occupant token){
+        List<List<Cell>> grid = board.getBoard();
+        int width = grid.size();
+        int height = grid.getFirst().size();
+        for (int x = 0; x < width; x++) {
+            boolean colWin = true;
+            for (int y = 0; y < height; y++) {
+                if (grid.get(x).get(y).getOccupant() != token) {
+                    colWin = false;
+                    break;
+                }
+            }
+            if (colWin) return true;
+        }
+        return false;
+    }
+
+    private boolean checkDiagonal(Board board, Occupant token){
+        List<List<Cell>> grid = board.getBoard();
+        int width = grid.size();
+        int height = grid.getFirst().size();
+        if (width == height) {
+            boolean diag1 = true;
+            boolean diag2 = true;
+            for (int i = 0; i < width; i++) {
+                if (grid.get(i).get(i).getOccupant() != token) {
+                    diag1 = false;
+                }
+                if (grid.get(i).get(width - 1 - i).getOccupant() != token) {
+                    diag2 = false;
+                }
+            }
+            return diag1 || diag2;
+        }
+        return false;
+    }
+
+    private boolean isBoardFull(Board board) {
+        for (List<Cell> row : board.getBoard()) {
+            for (Cell cell : row) {
+                if (cell.isEmpty()) {
+                    return false;
+                }
             }
         }
-        return null;
+        return true;
     }
 }
-
