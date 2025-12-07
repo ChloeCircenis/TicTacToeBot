@@ -58,6 +58,7 @@ public class TicTacToeGUI {
     }
 
     private void handleClick(int x, int y) {
+
         if (game.isOver()) return;
 
         Cell cell = game.getGameBoard().getCell(x, y);
@@ -79,6 +80,8 @@ public class TicTacToeGUI {
         // Let Driver process the move
         driver.turn();       // HUMAN MOVE
         refreshBoard();
+        game.setGameState(driver.endCheck());
+
 
         // If game ended after human move, stop.
         if (game.isOver()) {
@@ -92,6 +95,7 @@ public class TicTacToeGUI {
         if (!(nextPlayer.getStrategy() instanceof HumanStrategy)) {
             driver.turn();   // BOT MOVE
             refreshBoard();
+            game.setGameState(driver.endCheck());
         }
 
         if (game.isOver()) {

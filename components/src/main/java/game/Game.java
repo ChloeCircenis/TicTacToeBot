@@ -26,11 +26,16 @@ public class Game {
 //            isOver = driver.endCheck();
 //        }
 //    }
+
     public boolean isOver() {
         return isOver;
     }
     public void startGame(){
         this.isOver = false;
+    }
+
+    public void setGameState(boolean state){
+        this.isOver = state;
     }
 
     public Board getGameBoard() {

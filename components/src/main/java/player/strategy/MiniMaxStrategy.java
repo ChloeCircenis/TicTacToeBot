@@ -11,7 +11,7 @@ public class MiniMaxStrategy implements Strategy {
 
     @Override
     public Cell action(Game game, GameDriver gameDriver, Player actor) {
-        return bestMove(game,actor,gameDriver);
+        return bestMove(game, actor, gameDriver);
     }
 
     private int minTurn(Game game, int depth, GameDriver gameDriver){
@@ -20,9 +20,9 @@ public class MiniMaxStrategy implements Strategy {
             for(Cell cell : row){
                 if(cell.isEmpty()) {
                     cell.setOccupant(game.getPlayers().getLast().getToken());
-                    int value = miniMax(game,depth+1,true, gameDriver);
-                    cell.removeOccupant(game.getPlayers().getLast().getToken());
-                    bestValue = Math.min(bestValue,value);
+                    int value = miniMax(game, depth + 1, true, gameDriver);
+                    cell.clearOccupant(); // FIXED
+                    bestValue = Math.min(bestValue, value);
                 }
             }
         }
@@ -36,7 +36,7 @@ public class MiniMaxStrategy implements Strategy {
                 if(cell.isEmpty()) {
                     cell.setOccupant(game.getPlayers().getFirst().getToken());
                     int value = miniMax(game, depth + 1, false, gameDriver);
-                    cell.removeOccupant(game.getPlayers().getFirst().getToken());
+                    cell.clearOccupant(); // FIXED
                     bestValue = Math.max(bestValue, value);
                 }
             }
@@ -57,12 +57,15 @@ public class MiniMaxStrategy implements Strategy {
     private Cell bestMove(Game game, Player actor, GameDriver gameDriver){
         int bestVal = Integer.MIN_VALUE;
         Cell bestCell = null;
+
         for(List<Cell> row : game.getGameBoard().getBoard()){
             for(Cell cell : row){
                 if(cell.isEmpty()) {
-                    cell.setOccupant(game.getPlayers().getFirst().getToken());
+
+                    cell.setOccupant(actor.getToken());
                     int moveVal = miniMax(game, 1, actor.isMaximizing(), gameDriver);
                     cell.clearOccupant();
+
                     if (moveVal > bestVal) {
                         bestVal = moveVal;
                         bestCell = cell;
@@ -70,9 +73,9 @@ public class MiniMaxStrategy implements Strategy {
                 }
             }
         }
-        gameDriver.placePiece(bestCell.getCoord().xCoord(),bestCell.getCoord().yCoord(),actor.getToken());
         return bestCell;
     }
+
 
     static int evaluate(GameDriver gameDriver, Game game){
         Player winner = gameDriver.evaluateWinner();

@@ -23,9 +23,20 @@ public class TicTacToeDriver implements GameDriver {
     public void turn() {
         List<Player> players = game.getPlayers();
         Player player = players.get(turn % players.size());
-        player.action(game, this);
+
+        Cell chosen = player.action(game, this);  // Get the chosen move
+
+        if (chosen != null) {
+            placePiece(
+                    chosen.getCoord().xCoord(),
+                    chosen.getCoord().yCoord(),
+                    player.getToken()
+            );
+        }
+
         turn++;
     }
+
 
     @Override
     public boolean endCheck() {
@@ -116,6 +127,9 @@ public class TicTacToeDriver implements GameDriver {
     private Boolean listCheck(List<Cell> cells){
         int count = 0;
         for(Cell cell: cells) {
+            if(cell.getOccupant() == null){
+                return false;
+            }
           if (lastUpdated.getOccupant().name.equals(cell.getOccupant().name)) {
               count++;
           } else {

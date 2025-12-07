@@ -1,5 +1,6 @@
 package player;
 
+import board.Cell;
 import board.Occupant;
 import game.Game;
 import game.GameDriver;
@@ -15,8 +16,8 @@ public class Player {
         this.isMaximizing = isMaximizing;
     }
 
-    public void action(Game game, GameDriver gameDriver) {
-        this.strategy.action(game, gameDriver, this);
+    public Cell action(Game game, GameDriver gameDriver) {
+        return this.strategy.action(game, gameDriver, this);
     }
     public Occupant getToken(){
         return occupant;
