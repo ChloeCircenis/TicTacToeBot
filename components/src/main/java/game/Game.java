@@ -49,6 +49,13 @@ public class Game {
             gui.addObserver((HumanStrategy)player2.getStrategy(), MoveSubject.EventType.All);
             return this;
         }
+        public Builder simulation(){
+            Player player1 = PlayerFactory.createBotPlayer("X");
+            Player player2 = PlayerFactory.createBotPlayer("O");
+            players.add(player1);
+            players.add(player2);
+            return this;
+        }
         public Builder squareBoardSize(int x){
             this.board = new Board(x,x);
             return this;

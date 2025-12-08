@@ -18,8 +18,6 @@ public class HumanStrategy implements Strategy, MoveObserver {
             x = null;
             y = null;
             isResetting = false;
-
-            System.out.println("Waiting for human move...");
             while (x == null || y == null) {
                 try {
                     lock.wait();
@@ -27,11 +25,9 @@ public class HumanStrategy implements Strategy, MoveObserver {
                     Thread.currentThread().interrupt();
                 }
             }
-
             if (isResetting) {
                 return null;
             }
-
             return game.getGameBoard().getCell(x, y);
         }
     }
@@ -45,7 +41,6 @@ public class HumanStrategy implements Strategy, MoveObserver {
             lock.notifyAll();
         }
     }
-
     @Override
     public void notifyReset() {
         synchronized (lock) {

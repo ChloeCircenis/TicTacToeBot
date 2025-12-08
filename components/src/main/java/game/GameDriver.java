@@ -5,6 +5,7 @@ import board.Occupant;
 import player.Player;
 
 public interface GameDriver {
+    void start();
     void turn();
     boolean endCheck();
     Player winner();

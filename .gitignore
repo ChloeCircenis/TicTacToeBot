@@ -40,7 +40,7 @@
 /components/build/tmp/compileJava/compileTransaction/stash-dir/Player.class.uniqueId2
 /components/build/classes/java/main/player/PlayerFactory.class
 /components/build/tmp/compileJava/compileTransaction/stash-dir/PlayerFactory.class.uniqueId4
-/components/build/classes/java/test/PlayerTest.class
+/components/build/classes/java/test/Simulation.class
 /app/build/tmp/compileJava/previous-compilation-data.bin
 /components/build/tmp/compileJava/previous-compilation-data.bin
 /components/build/tmp/compileTestJava/previous-compilation-data.bin
@@ -81,3 +81,7 @@
 /components/build/test-results/test/TEST-GameTest.xml
 /components/build/classes/java/main/ui/TicTacToeGUI.class
 /components/build/tmp/compileJava/compileTransaction/stash-dir/TicTacToeGUI.class.uniqueId10
+/.gradle/
+/build/
+/components/.gradle/
+/components/build/
