@@ -6,29 +6,57 @@ import board.Occupant;
 import game.Game;
 import game.GameDriver;
 import player.Player;
+import ui.TicTacToeGUI;
 
 import java.util.List;
 
-public class TicTacToeDriver implements GameDriver {
-
+public class TicTacToeDriver implements GameDriver, MoveObserver {
     private final Game game;
+    private final TicTacToeGUI gui;
     private int turn = 0;
+    private boolean gameOver = false;
 
-    public TicTacToeDriver(Game game) {
+    public TicTacToeDriver(Game game, TicTacToeGUI gui) {
         this.game = game;
+        this.gui = gui;
+    }
+
+    public void start() {
+        System.out.println("Starting TicTacToeDriver");
+        gui.display(game.getGameBoard());
+        turn = 0;
+        while(!gameOver) {
+            turn();
+            gui.display(game.getGameBoard());
+        }
+        System.out.println("Game over!");
+        Player winner = winner();
+        if(winner == null){
+            gui.gameOver("It's a cat's game!");
+            return;
+        }
+        gui.gameOver(winner.getName() + " has won!");
     }
 
     @Override
+    public void notifyMove(int x, int y) {    }
+    @Override
+    public void notifyReset(){
+        reset();
+    }
+    @Override
+    public void notifyStart(){
+        start();
+    }
+    @Override
     public void turn() {
-        List<Player> players = game.getPlayers();
-        Player player = players.get(turn % players.size());
-
-        Cell chosen = player.action(game, this); // move selection
-        if (chosen != null) {
-            placePiece(chosen.getCoord().xCoord(), chosen.getCoord().yCoord(), player.getToken());
+        Player currentPlayer = game.getByTurn(turn);
+        Cell cell = currentPlayer.action(game, this);
+        if(cell.isEmpty()) {
+            placePiece(cell.getCoord().xCoord(), cell.getCoord().yCoord(), currentPlayer.getToken());
+            turn++;
+            endCheck();
         }
-
-        turn++;
     }
 
     @Override
@@ -36,24 +64,22 @@ public class TicTacToeDriver implements GameDriver {
         Board board = game.getGameBoard();
         boolean someoneWon = hasWon(board, game.getPlayers().getFirst().getToken()) ||
                 hasWon(board, game.getPlayers().getLast().getToken());
-        return someoneWon || isBoardFull(board);
-    }
-
-    @Override
-    public int getTurn() {
-        return turn;
+        gameOver = someoneWon || isBoardFull(board);
+        return gameOver;
     }
 
     @Override
     public void placePiece(int x, int y, Occupant symbol) {
-        game.getGameBoard().addOccupant(x, y, symbol);
-//        Cell lastUpdated = game.getGameBoard().getCell(x, y);
+        if (game.getGameBoard().isVacant(x, y)) {
+            game.getGameBoard().addOccupant(x, y, symbol);
+        }
     }
 
     @Override
-    public Player evaluateWinner() {
-        if (!game.isOver()) return null;
-
+    public Player winner() {
+        if (!gameOver){
+            return null;
+        }
         Board board = game.getGameBoard();
         if (hasWon(board, game.getPlayers().getFirst().getToken())) {
             return game.getPlayers().getFirst();
@@ -61,15 +87,20 @@ public class TicTacToeDriver implements GameDriver {
         if (hasWon(board, game.getPlayers().getLast().getToken())) {
             return game.getPlayers().getLast();
         }
-        return null; // draw
+        return null;
     }
-
 
     @Override
     public boolean hasWon(Board board, Occupant token) {
         return checkVertical(board, token) || checkHorizontal(board, token) || checkDiagonal(board, token);
     }
 
+    public void reset() {
+        System.out.println("Restarting...");
+        game.getGameBoard().resetBoard();
+        gameOver = false;
+        turn = 0;
+    }
 
     private boolean checkVertical(Board board, Occupant token){
         List<List<Cell>> grid = board.getBoard();

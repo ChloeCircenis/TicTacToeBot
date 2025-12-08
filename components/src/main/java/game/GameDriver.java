@@ -7,8 +7,7 @@ import player.Player;
 public interface GameDriver {
     void turn();
     boolean endCheck();
-    int getTurn();
-    Player evaluateWinner();
+    Player winner();
     void placePiece(int x, int y, Occupant symbol);
     boolean hasWon(Board board, Occupant token);
 }

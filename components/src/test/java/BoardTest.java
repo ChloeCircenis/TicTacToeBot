@@ -12,4 +12,5 @@ public class BoardTest {
         board.addOccupant(1,1,piece);
         assertTrue(board.getCell(1,1).contains(piece));
     }
+
 }

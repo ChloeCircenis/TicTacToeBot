@@ -33,20 +33,18 @@ public class Board {
         }
     }
 
-    public Boolean inBounds(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
-    }
-
     public Cell getCell(int x, int y){
         return  board.get(x).get(y);
     }
 
-    public boolean addOccupant(int x, int y, Occupant occupant) {
-        Cell cell = board.get(x).get(y);
-        if(cell.isEmpty()){
+    public boolean isVacant(int x, int y) {
+        return board.get(x).get(y).isEmpty();
+    }
+
+    public void addOccupant(int x, int y, Occupant occupant) {
+        if(isVacant(x,y)) {
+            Cell cell = board.get(x).get(y);
             cell.setOccupant(occupant);
-            return true;
         }
-        return false;
     }
 }

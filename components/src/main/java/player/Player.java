@@ -7,23 +7,17 @@ import game.GameDriver;
 import player.strategy.Strategy;
 
 public class Player {
-    private Strategy strategy;
-    private Occupant occupant;
-    private boolean isMaximizing;
-    public Player(Strategy strategy,  Occupant occupant, boolean isMaximizing) {
+    private final Strategy strategy;
+    private final Occupant occupant;
+    public Player(Strategy strategy,  Occupant occupant) {
         this.strategy = strategy;
         this.occupant = occupant;
-        this.isMaximizing = isMaximizing;
     }
-
     public Cell action(Game game, GameDriver gameDriver) {
         return this.strategy.action(game, gameDriver, this);
     }
     public Occupant getToken(){
         return occupant;
-    }
-    public boolean isMaximizing() {
-        return isMaximizing;
     }
     public String getName(){
         return occupant.name;
